@@ -1,0 +1,46 @@
+.mainsection{
+    opacity: 1;
+     background-color: #F7F3F2;
+     
+    }
+     
+    .globalsummary{
+    display:flex;
+    align-items:center;
+    height: 148px;
+    opacity: 1;
+    gap: 24px;
+    padding: 40px;
+    background-color: var(--Layer-layer-02, #FFFFFF);
+    margin-top: 40px;
+    }
+     
+     
+    .summarysection{
+     display:flex;
+     flex-direction:column;
+    gap: 4px;
+     
+    }
+     
+     
+    .header-head{
+    font-family: IBM Plex Sans;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: 0px;
+    color: #000000;
+     
+    }
+     
+    .header-para{
+        font-family:IBM Plex Sans;
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0px;
+     
+    }
+    

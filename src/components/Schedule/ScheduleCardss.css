@@ -55,15 +55,15 @@ opacity: 1;
 }
  
 .approve{
-width: 32px;
-height: 32px;
+width: 16px;
+height: 16px;
 opacity: 1;
 background-color:transparent;
 background: #FFFFFF00;
 background-blend-mode: multiply;
  object-fit: contain;
  padding:0px;
- margin:0px;
+ margin:12px 17px 0px 0px;
 }
 
 .ellipsis {

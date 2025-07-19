@@ -27,7 +27,7 @@ const Navigation = () => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <div className="navbar-anc">ANC</div>
+        <div className="navbar-anc">Name Clearing</div>
         <div className="navbar-by-logo">
           <span>by</span>
           <img src={logo} alt="logo" className="navbar-logo-img" />

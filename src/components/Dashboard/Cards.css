@@ -1,4 +1,4 @@
-.cards{
+.cards1{
     display:flex;
     flex-direction:row;
     justify-content:space-between;
@@ -10,7 +10,7 @@
 }
  
  
-.tile-item{
+.tile-item1{
    display:flex;
    flex-direction:column;
    background-color: var(--Layer-layer-02, #FFFFFF) !important;
@@ -22,7 +22,7 @@
  
 }
  
-.count{
+.count1{
 font-family: IBM Plex Sans;
 font-weight: 400;
 font-style: Regular;
@@ -34,7 +34,7 @@ color: var(--Text-text-primary, #161616);
  
 }
  
-.inner1{
+.inner11{
 display:flex;
 flex-direction:row;
 align-items:center;
@@ -43,7 +43,7 @@ opacity: 1;
 padding-top:5px;
 }
  
-.summary-head{
+.summary-head1{
 font-family: Fixed/Body/Font family;
 font-weight: 400;
 font-style: Regular;
@@ -54,19 +54,19 @@ color: var(--Text-text-primary, #161616);
 opacity: 1;
 }
  
-.approve{
-width: 32px;
-height: 32px;
+.approve1{
+width: 16px;
+height: 16px;
 opacity: 1;
 background-color:transparent;
 background: #FFFFFF00;
 background-blend-mode: multiply;
  object-fit: contain;
  padding:0px;
- margin:0px;
+ margin:12px 17px 0px 0px;
 }
 
-.ellipsis {
+.ellipsis1{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

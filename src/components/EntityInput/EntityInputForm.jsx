@@ -1,12 +1,14 @@
 import React, { useState, useRef } from "react";
 import "./EntityInputForm.css";
 import Navigation from "../Navigation";
+import { InlineLoading } from '@carbon/react';
+import { CaretDown } from '@carbon/icons-react';
 
 
-let results_arr = []; 
+let results_arr = [];
 // Add the API call function
 async function clearEntitiesAPI(entities) {
-   
+  
   const response = await fetch(
     'https://anc-kaara.lemoncoast-3e44e81a.eastus2.azurecontainerapps.io/clear_entities',
     {
@@ -27,11 +29,14 @@ export default function EntityInputForm() {
   // State for Manual Entry
   const [manualType, setManualType] = useState("");
   const [manualEntity, setManualEntity] = useState("");
+  const [manualYears, setManualYears] = useState("");
+  const [manualCompanyName, setManualCompanyName] = useState("");
   const [manualEntities, setManualEntities] = useState([]);
 
   // State for Bulk Upload
   const [bulkFiles, setBulkFiles] = useState([]);
   const fileInputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   const canAdd = manualType && manualEntity.trim();
 
@@ -39,9 +44,10 @@ export default function EntityInputForm() {
     if (canAdd) {
       setManualEntities([
         ...manualEntities,
-        { name: manualEntity.trim(), type: manualType }
+        { name: manualEntity.trim(), type: manualType, years: manualYears }
       ]);
       setManualEntity("");
+      setManualYears("");
     }
   };
 
@@ -69,16 +75,17 @@ export default function EntityInputForm() {
 
   // Add handler for Start Processing
   const handleStartProcessing = async () => {
+    setLoading(true);
     console.log("handle processing method called...");
     const entities = manualEntities.map(e => ({
       name: e.name,
       entity_type: e.type,
-      // additional_info: "it's a company"
+      years: e.years, // add this line
       additional_info: manualType
     }));
     try {
       const result = await clearEntitiesAPI(entities);
-     // Pass response up
+    // Pass response up
       // Store result in localStorage
       try {
         localStorage.setItem('entityResults', JSON.stringify(result.results));
@@ -88,16 +95,34 @@ export default function EntityInputForm() {
       console.log('API result:', result);
       results_arr.push(result);
       console.log("results...",results_arr);
-      
+    
       // You can pass result to another component or show a notification here
     } catch (error) {
       console.error('API error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
     <Navigation/>
+    {/* {loading && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(255,255,255,0.7)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <InlineLoading
+            description="Loading"
+            iconDescription="Loading data..."
+          />
+        </div>
+      )} */}
     <div className="entity-input-form-container" style={{marginTop:10}}>
       {/* Top Card with heading and subtitle */}
       <div className="entity-input-form-card">
@@ -131,48 +156,81 @@ export default function EntityInputForm() {
           >
             Manual Entry
           </span>
-          {/* Type Dropdown */}
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', fontWeight: 400, marginBottom: 8 }}>Type</label>
-            <select
-              style={{ width: '100%', padding: '16px', background: '#f5f5f5', border: 'none', fontSize: 18 }}
-              value={manualType}
-              onChange={e => setManualType(e.target.value)}
-            >
-              <option value="">Choose Type</option>
-              <option value="Company">Company</option>
-              <option value="Promoter">Promoter</option>
-              <option value="Director">Director</option>
-            </select>
-          </div>
-          {/* Entity Name and Add Button */}
-          <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
+
+          {/* Type and Years row */}
+          <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontWeight: 400, marginBottom: 8 }}>Entity Name</label>
+              <label style={{ display: 'block', fontWeight: 400, marginBottom: 8 }}>Type</label>
+              <select
+                className="manual-entry-type-select"
+                value={manualType}
+                onChange={e => setManualType(e.target.value)}
+                style={{ width: '100%' }}
+              >
+                <option value="">Choose Type</option>
+                <option value="Company">Company</option>
+                <option value="Promoter">Promoter</option>
+                <option value="Director">Director</option>
+              </select>
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', fontWeight: 400, marginBottom: 8 }}>
+                Years <span style={{ color: 'red' }}>*</span>
+              </label>
               <input
                 type="text"
-                placeholder="Enter Entity Name"
-                style={{ width: '100%', padding: '16px', background: '#f5f5f5', border: 'none', fontSize: 18 }}
-                value={manualEntity}
-                onChange={e => setManualEntity(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') handleAdd(); }}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="Years"
+                className="manual-entry-years-input"
+                value={manualYears}
+                onChange={e => setManualYears(e.target.value.replace(/[^0-9]/g, ''))}
+                maxLength={3}
+                autoComplete="off"
+                style={{ width: '100%' }}
               />
             </div>
+          </div>
+
+          {/* Company name */}
+          <label style={{ display: 'block', fontWeight: 400, fontSize: '0.875rem', color: '#525252', margin: '8px 0 8px 0' }}>
+            Company name <span style={{ color: 'red' }}>*</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Enter Company Name"
+            className="manual-entry-entity-name-input"
+            style={{ height: '40px', width: '100%', marginBottom: 8,color: 'black' }}
+            value={manualCompanyName}
+            onChange={e => setManualCompanyName(e.target.value)}
+          />
+
+          {/* Entity Name and Add+ row */}
+          <label style={{ display: 'block', fontWeight: 400, marginBottom: 8 }}>Entity Name</label>
+          <div style={{ display: 'flex', gap: 16, marginBottom: 8 }}>
+            <input
+              type="text"
+              placeholder="Enter Entity Name"
+              className="manual-entry-entity-name-input"
+              value={manualEntity}
+              onChange={e => setManualEntity(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleAdd(); }}
+              style={{ height: '40px', flex: 2 }}
+            />
             <button
               style={{
-                width: 120,
+                width: 100,
                 background: canAdd ? '#0f62fe' : '#ccc',
                 color: canAdd ? '#fff' : '#888',
                 fontSize: 18,
                 border: 'none',
-                marginTop: 32,
-                height: 48,
+                height: 40,
                 cursor: canAdd ? 'pointer' : 'not-allowed',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 8,
-                // borderRadius: 4,
+                fontWeight: 400,
                 transition: 'background 0.2s'
               }}
               disabled={!canAdd}
@@ -181,31 +239,21 @@ export default function EntityInputForm() {
               Add <span style={{ fontSize: 22, fontWeight: 400, marginLeft: 4 }}>+</span>
             </button>
           </div>
-          {/* Added Entities */}
-          <div>
-            <label style={{ display: 'block', fontWeight: 400, marginBottom: 8 }}>Added Entities ({manualEntities.length})</label>
-            <div style={{ background: '#f5f5f5', padding: 12, border: 'none', minHeight: 48, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-              {manualEntities.map((entity, idx) => (
-                <span key={idx} style={{ display: 'flex', alignItems: 'center', background: '#e0e0e0', borderRadius: 20, padding: '6px 16px', fontSize: 16, marginRight: 8 }}>
-                  {entity.name}
-                  <button
-                    onClick={() => handleRemove(idx)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#888',
-                      marginLeft: 8,
-                      fontSize: 18,
-                      cursor: 'pointer',
-                      lineHeight: 1
-                    }}
-                    aria-label="Remove"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
+
+          {/* Added Entities and empty input box */}
+          <label style={{ display: 'block', fontWeight: 400, marginBottom: 8 }}>Added Entities ({manualEntities.length})</label>
+          <div className="manual-entry-added-entities-box">
+            {manualEntities.map((entity, idx) => (
+              <span key={idx} className="manual-entry-entity-chip">
+                {entity.name}
+                <button
+                  onClick={() => handleRemove(idx)}
+                  aria-label={`Remove ${entity.name}`}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
           </div>
         </div>
         {/* Bulk Upload Card */}
@@ -232,7 +280,7 @@ export default function EntityInputForm() {
           </span>
           <div style={{ marginBottom: 16 }}>
             <p className="cds--file--label" style={{ fontWeight: 'bold', marginBottom: 4 }}>
-              Upload Medical Documents
+              Upload should contain Company Name, Entity Name, Years. these coloums.
             </p>
             <p className="cds--label-description" style={{ color: '#666', fontSize: 14, marginBottom: 16 }}>
               Max file size is 5 MB. Supported file types are .csv and .xlsx.
@@ -313,7 +361,7 @@ export default function EntityInputForm() {
       </div>
       {/* Instructions Card */}
       <div style={{
-        background: '#fff',
+        background: '#F7F3F2',
         width: '100%',
         marginTop: 32,
         padding: 32,
@@ -325,9 +373,9 @@ export default function EntityInputForm() {
       }}>
         <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 16 }}>Instructions</div>
         <ol style={{ color: '#444', fontSize: 15, marginLeft: 18, marginBottom: 0, paddingLeft: 0 }}>
-          <li style={{ marginBottom: 6 }}>Processing will search for news articles and perform risk analysis.</li>
-          <li style={{ marginBottom: 6 }}>Estimated time: 2-5 minutes per entity</li>
-          <li>You will be notified when processing is complete.</li>
+          <li style={{ marginBottom: 6 }}>1. Processing will search for news articles and perform risk analysis.</li>
+          <li style={{ marginBottom: 6 }}>2. Estimated time: 2-5 minutes per entity</li>
+          <li>3. You will be notified when processing is complete.</li>
         </ol>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 0, marginTop: 32 }}>
           <button
@@ -360,9 +408,17 @@ export default function EntityInputForm() {
               transition: 'background 0.2s'
             }}
             onClick={handleStartProcessing}
+            disabled={loading}
           >
             Start Processing
           </button>
+          {loading && (
+            <InlineLoading
+              description="Loading"
+              iconDescription="Loading data..."
+              style={{ marginLeft: 16 }}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -1,0 +1,12 @@
+.active-records-container {
+  width: 100%;
+  max-width: 1440px;
+  height: 911px;
+  background: #F7F3F2;
+  gap: 24px;
+  opacity: 1;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin: 0 auto;
+  /* Remove scroll bar */
+} 

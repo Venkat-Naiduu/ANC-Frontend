@@ -197,3 +197,54 @@ border: 1px solid var(--Button-button-secondary-active, #6F6F6F)
 .cds--pagination {
     background-color:#ffffff !important;
 }
+
+.custom-tag-positive.cds--tag.cds--tag--green,
+.cds--tag.custom-tag-positive.cds--tag--green {
+  background-color: #A7F0BA !important;
+  color: #0E6027 !important;
+}
+
+.custom-tag-negative.cds--tag.cds--tag--red,
+.cds--tag.custom-tag-negative.cds--tag--red {
+  background-color: var(--tag-background, #FFD7D9) !important;
+  color: var(--tag-color, #A2191F) !important;
+}
+
+.custom-tag-neutral.cds--tag.cds--tag--gray,
+.cds--tag.custom-tag-neutral.cds--tag--gray {
+  background-color: var(--tag-background, #e0e0e0) !important;
+  color: var(--tag-color, #161616) !important;
+}
+
+.cds--tag--green {
+  background-color: #A7F0BA !important;
+  color: #0E6027 !important;
+}
+
+.action-link-icon,
+.action-link-icon:visited,
+.action-link-icon:hover,
+.action-link-icon:active,
+.action-link-icon:focus {
+  color: #525252 !important;
+}
+
+.action-cell div:focus, .action-cell div:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.cds--overflow-menu-options .cds--overflow-menu-options {
+  position: absolute !important;
+  left: 100% !important;
+  top: 0 !important;
+  margin-left: 0 !important;
+  min-width: 140px !important;
+  z-index: 9999 !important;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.cds--overflow-menu-options[style*="transform"] {
+  transform: none !important;
+}
